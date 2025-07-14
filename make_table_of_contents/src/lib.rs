@@ -68,7 +68,7 @@ pub fn make_table_of_contents(tokens: TokenStream) -> TokenStream {
         }
         if heading_level > 0 {
             for _ in 0..(heading_level - 1) {
-                _ = write!(toc, "&nbsp;&nbsp;&nbsp;&nbsp;");
+                _ = write!(toc, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
             }
             *section_numbers.entry(heading_level - 1).or_insert(0) += 1;
             _ = write!(toc, "_**");
@@ -86,7 +86,11 @@ pub fn make_table_of_contents(tokens: TokenStream) -> TokenStream {
                 " [{}]({}#{})  \n",
                 section,
                 input.target.as_ref().map(|s| s.as_str()).unwrap_or(""),
-                section.to_lowercase().replace(" ", "-").replace(",", ""),
+                section
+                    .to_lowercase()
+                    .replace(" ", "-")
+                    .replace(",", "")
+                    .replace("\"", ""),
             );
             section_numbers.insert(heading_level, 0);
         }
