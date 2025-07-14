@@ -41,6 +41,7 @@ pub mod doc;
 mod node;
 mod state;
 
+use egui::util::id_type_map::SerializableAny;
 use egui::{
     self, emath, layers::ShapeIdx, vec2, EventFilter, Id, Key, LayerId, Layout, Modifiers, NumExt,
     Order, PointerButton, Pos2, Rangef, Rect, Response, Sense, Shape, Ui, UiBuilder, Vec2,
@@ -56,9 +57,15 @@ pub use state::*;
 /// This is just a trait alias for the collection of necessary traits that a node id
 /// must implement.
 #[cfg(not(feature = "persistence"))]
-pub trait NodeId: Clone + PartialEq + Eq + Hash + std::fmt::Debug {}
+pub trait NodeId:
+    Clone + PartialEq + Eq + Hash + Sync + Send + SerializableAny + std::fmt::Debug
+{
+}
 #[cfg(not(feature = "persistence"))]
-impl<T> NodeId for T where T: Clone + PartialEq + Eq + Hash + std::fmt::Debug {}
+impl<T> NodeId for T where
+    T: Clone + PartialEq + Eq + Hash + Sync + Send + SerializableAny + std::fmt::Debug
+{
+}
 
 #[cfg(feature = "persistence")]
 /// A node in the tree is identified by an id that must implement this trait.
@@ -66,12 +73,28 @@ impl<T> NodeId for T where T: Clone + PartialEq + Eq + Hash + std::fmt::Debug {}
 /// This is just a trait alias for the collection of necessary traits that a node id
 /// must implement.
 pub trait NodeId:
-    Clone + PartialEq + Eq + Hash + serde::de::DeserializeOwned + serde::Serialize
+    Clone
+    + PartialEq
+    + Eq
+    + Hash
+    + serde::de::DeserializeOwned
+    + serde::Serialize
+    + Sync
+    + Send
+    + SerializableAny
 {
 }
 #[cfg(feature = "persistence")]
 impl<T> NodeId for T where
-    T: Clone + PartialEq + Eq + Hash + serde::de::DeserializeOwned + serde::Serialize
+    T: Clone
+        + PartialEq
+        + Eq
+        + Hash
+        + serde::de::DeserializeOwned
+        + serde::Serialize
+        + Sync
+        + Send
+        + SerializableAny
 {
 }
 

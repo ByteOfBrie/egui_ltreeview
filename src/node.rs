@@ -98,7 +98,7 @@ pub trait NodeConfig<NodeIdType> {
     fn closer(&mut self, ui: &mut Ui, closer_state: CloserState) {}
 
     /// Whether or not this node has a context menu.
-    /// 
+    ///
     /// If a node was right-clicked but did not configure a context menu then the
     /// [`TreeView::fallback_context_menu`](`crate::TreeView::fallback_context_menu`) will be used.
     ///
@@ -266,7 +266,7 @@ impl<'add_ui, NodeIdType: NodeId> NodeBuilder<'add_ui, NodeIdType> {
     }
 
     /// Add a context menu to this node.
-    /// 
+    ///
     /// If a node was right-clicked but did not configure a context menu then the
     /// [`TreeView::fallback_context_menu`](`crate::TreeView::fallback_context_menu`) will be used.
     ///
@@ -441,7 +441,7 @@ impl<'config, NodeIdType: NodeId> Node<'config, NodeIdType> {
                 .spacing()
                 .icon_rectangles(ui.available_rect_before_wrap());
 
-            let res = ui.allocate_new_ui(UiBuilder::new().max_rect(big_rect), |ui| {
+            let res = ui.scope_builder(UiBuilder::new().max_rect(big_rect), |ui| {
                 let is_hovered = interaction
                     .hover_pos()
                     .is_some_and(|pos| ui.max_rect().contains(pos));
@@ -475,7 +475,7 @@ impl<'config, NodeIdType: NodeId> Node<'config, NodeIdType> {
                 .spacing()
                 .icon_rectangles(ui.available_rect_before_wrap());
             Some(
-                ui.allocate_new_ui(UiBuilder::new().max_rect(big_rect), |ui| {
+                ui.scope_builder(UiBuilder::new().max_rect(big_rect), |ui| {
                     ui.set_min_size(big_rect.size());
                     self.config.icon(ui);
                 })

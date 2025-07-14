@@ -1,11 +1,10 @@
 use std::collections::HashMap;
 
-use egui::{Id, Ui};
+use egui::{util::id_type_map::SerializableAny, Id, Ui};
 
 use crate::NodeId;
 
-#[derive(Clone, Debug)]
-#[cfg_attr(feature = "persistence", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub(crate) struct DragState<NodeIdType> {
     pub dragged: Vec<NodeIdType>,
     pub simplified: Vec<NodeIdType>,
@@ -15,8 +14,7 @@ pub(crate) struct DragState<NodeIdType> {
 ///
 /// This holds which node is selected and the open/close
 /// state of the directories.
-#[derive(Clone)]
-#[cfg_attr(feature = "persistence", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct TreeViewState<NodeIdType: Eq + std::hash::Hash> {
     /// Id of the node that was selected.
     selected: Vec<NodeIdType>,
@@ -52,7 +50,7 @@ impl<NodeIdType: NodeId> Default for TreeViewState<NodeIdType> {
 }
 impl<NodeIdType> TreeViewState<NodeIdType>
 where
-    NodeIdType: NodeId + Send + Sync + 'static,
+    NodeIdType: NodeId + Send + Sync + SerializableAny + 'static,
 {
     /// Load a [`TreeViewState`] from memory.
     pub fn load(ui: &mut Ui, id: Id) -> Option<Self> {
